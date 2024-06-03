@@ -1,0 +1,7 @@
+1 Magnolia 1
+arma Sabie 20 100 10 11 11
+2 Darkonia 2
+arma Palos 99 88 77 55 44
+arma Sabie 20 100 10 11 11
+3 Valahia 1
+arma Palos 99 88 77 55 44
