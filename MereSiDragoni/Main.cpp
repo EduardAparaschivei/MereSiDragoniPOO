@@ -12,6 +12,8 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
+#include "GamePlay.h"
+
 using namespace std;
 
 string numeFisier = "Jucator.txt";
@@ -19,6 +21,7 @@ string numeFisierDragoni = "Dragoni.txt";
 string numeFisierOras = "Orase.txt";
 Jucator jucator;
 Dragon dragon;
+GamePlay Joc;
 int puncte = 5;
 int alegere;
 int sansa;
@@ -182,9 +185,8 @@ void Lupta()
 int main()
 {
 	
-	Oras oras1(numeFisierOras, 1);
-	oras1.Info();
-	oras1.printObiecte();
+	Joc.CreazaJucator(jucator);
+	jucator.Info();
 
 
 
