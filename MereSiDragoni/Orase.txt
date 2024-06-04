@@ -1,7 +1,15 @@
-1 Magnolia 1
-arma Sabie 20 100 10 11 11
-2 Darkonia 2
-arma Palos 99 88 77 55 44
-arma Sabie 20 100 10 11 11
-3 Valahia 1
-arma Palos 99 88 77 55 44
+1 Magnolia 2
+arma Sabie 1 1 1 1 1
+arma Maceta 22 6 24 35 33
+2 Lordaeron 2
+arma Sabie 1 1 1 1 1
+arma Maceta 22 6 24 35 33
+3 Haven 2
+arma Sabie 1 1 1 1 1
+arma Maceta 22 6 24 35 33
+4 Badlands 2
+arma Sabie 1 1 1 1 1
+arma Maceta 22 6 24 35 33
+5 GodLand 2
+arma Sabie 1 1 1 1 1
+arma Maceta 22 6 24 35 33

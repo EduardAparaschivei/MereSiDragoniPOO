@@ -138,6 +138,19 @@ void Oras::addObiectSpecial(const ObiectSpecial& special)
 	addObiectSpecial(specialPtr);
 }
 
+int Oras::getDimInventar()
+{
+		return obiecte.size();
+}
+
+Obiect* Oras::getObiect(int index)
+{
+	if (index >= 0 && index < obiecte.size())
+	{
+		return obiecte[index];
+	}
+}
+
 
 void Oras::Info()
 {
@@ -146,9 +159,13 @@ void Oras::Info()
 
 void Oras::printObiecte()
 {
+	int i = 1;
 	for (Obiect* obiect : obiecte)
 	{
+		cout <<i<<")";
 		obiect->Info();
+		cout << "\n";
+		i = i + 1;
 	}
 }
 

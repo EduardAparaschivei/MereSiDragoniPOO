@@ -16,6 +16,7 @@ public:
 	string getTip() const;
 	void setTip(string& tip);
 	virtual int getPutereAtac()const;
+	friend bool operator == (const Obiect &obiect,const Obiect&obiect2);
 
 protected:
 	string Tip;

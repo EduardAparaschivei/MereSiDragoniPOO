@@ -5,11 +5,25 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <random>
 
 using namespace std;
 
-Arma::Arma() : Obiect("", "", 0, 0, 0, 0), PutereAtac(0)
+Arma::Arma() : Obiect("arma","", 0, 0, 0, 0), PutereAtac(0)
 {
+	vector<string> numearme = { "Sabie","Topor","Arc","Cutit","Maceta","Sulita" };
+	random_device rd; //Seed
+	mt19937 gen(rd());//Standardul mersenne_twister_engine pentru generare numere aleatorii
+	//distribuirea valorilor
+	uniform_int_distribution<> dist(1, 50);
+	uniform_int_distribution<> nameDist(0, numearme.size() - 1);
+
+	Nume = numearme[nameDist(gen)];
+	PutereAtac = dist(gen);
+	HP = dist(gen);
+	XP = dist(gen);
+	Scor = dist(gen);
+	Bani = dist(gen);
 
 }
 
@@ -55,7 +69,7 @@ Arma::~Arma()
 void Arma::Info()
 {
 	Obiect::Info();
-	cout << "Putere atac: " << PutereAtac << endl;
+	cout << "Putere atac: " << PutereAtac;
 }
 
 void Arma::setPutereAtac(int putere)

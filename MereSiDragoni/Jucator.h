@@ -18,6 +18,8 @@ public:
 	Jucator(std::string _Nume,int _HP,int _Bani,int _XP,int _Scor,int _Putere,int _Inteligenta,int _Agilitate,int _Stagiu);
 	Jucator(string& numefisier);
 	Jucator& operator=(const Jucator& jucator);
+	Obiect* getObiect(int index);
+	void removeObiect(int index);
 	virtual ~Jucator();
 	void Info();
 	void addArma(Arma* arma);
@@ -28,15 +30,22 @@ public:
 	void salvareFisier();
 	//getteri
 	int getStagiu();
-	//setteri
-	void upPutere();
-	void upInteligenta();
-	void upAgilitate();
-	void upStagiu();
 	int getPutere();
 	int getInteligenta();
 	int getAgilitate();
 	int getDimInventar();
+	vector<Obiect*> getObiecteCopie() const;
+	//setteri
+	void upPutere();
+	void setPutere();
+	void upInteligenta();
+	void setInteligenta();
+	void upAgilitate();
+	void setAgilitate();
+	void upStagiu();
+	void setStagiu(int newstage);
+	void setLevel();
+	
 
 
 private:

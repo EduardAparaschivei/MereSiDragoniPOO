@@ -20,10 +20,33 @@ Obiect::~Obiect()
 
 }
 
+bool operator == (const Obiect& obiect1, const Obiect& obiect2)
+{
+	bool egalitate = true;
+	if (obiect1.getNume() != obiect2.getNume())
+	{
+		egalitate = false;
+	}
+	if (obiect1.getBani() != obiect2.getBani())
+	{
+		egalitate = false;
+	}
+	if (obiect1.getScor() != obiect2.getScor())
+	{
+		egalitate = false;
+	}
+	if (obiect1.getXP() != obiect2.getXP())
+	{
+		egalitate = false;
+	}
+	return egalitate;
+}
+
 void Obiect::Info()
 {
-	Core::Info();
-	cout << "Tip: " << Tip << endl;
+	
+	cout << "Tip: " << Tip << " Nume:" << Nume << " Pret:" << Bani << " Conditie: " <<
+		HP << " XP: " << XP << " Scor: " << Scor;
 }
 
 string Obiect::getTip() const

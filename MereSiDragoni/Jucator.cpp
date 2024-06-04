@@ -164,9 +164,39 @@ void Jucator::addObiectSpecial(const ObiectSpecial& special)
 
 void Jucator::printObiecte()
 {
+	int i = 1;
 	for (Obiect* obiect : *obiecte)
 	{
-		obiect->Info();
+		cout<<i<<")"<< "Tip:" << obiect->getTip() << " Nume:" << obiect->getNume() << " Utilizari:" << obiect->getHp()<<" Pret:"<<obiect->getBani();
+		if (obiect->getTip() == "arma")
+		{
+			cout << " Daune:" << obiect->getPutereAtac();
+		}
+		cout << "\n";
+		i++;
+	}
+}
+
+Obiect* Jucator::getObiect(int index)
+{
+	if (index >= 0 && index < obiecte->size())
+	{
+		return (*obiecte)[index];
+	}
+	return nullptr;
+}
+
+vector<Obiect*> Jucator::getObiecteCopie()const
+{
+	return *obiecte;
+}
+
+void Jucator::removeObiect(int index)
+{
+	if (index >= 0 && index < obiecte->size())
+	{
+		delete(*obiecte)[index];
+		obiecte->erase(obiecte->begin() + (index));
 	}
 }
 
@@ -199,7 +229,6 @@ void Jucator::salvareFisier()
 			}
 		
 		file.close();
-		cout << "Date salvate." << endl;
 	}
 	else
 	{
@@ -217,6 +246,10 @@ int Jucator::getPutere()
 {
 	return Putere;
 }
+void Jucator::setPutere()
+{
+	Putere = 0;
+}
 void Jucator::upInteligenta()
 {
 	Inteligenta++;
@@ -224,6 +257,10 @@ void Jucator::upInteligenta()
 int Jucator::getInteligenta()
 {
 	return Inteligenta;
+}
+void Jucator::setInteligenta()
+{
+	Inteligenta = 0;
 }
 void Jucator::upAgilitate()
 {
@@ -233,7 +270,10 @@ int Jucator::getAgilitate()
 {
 	return Agilitate;
 }
-
+void Jucator::setAgilitate()
+{
+	Agilitate = 0;
+}
 int Jucator::getStagiu()
 {
 	return Stagiu;
@@ -254,5 +294,14 @@ int Jucator::getDimInventar()
 	}
 }
 
+void Jucator::setStagiu(int newstage)
+{
+	Stagiu = newstage;
+}
+
+void Jucator::setLevel()
+{
+	Nivel = 1;
+}
 
 #pragma endregion

@@ -1,2 +1,4 @@
-Edo 100 0 0 0 3 2 1 1
-arma Sabie 20 100 10 11 11
+Edo 55 60 60 313 3 1 1 3
+arma Cutit 36 22 36 20 50
+arma Maceta 14 39 22 31 43
+arma Topor 20 42 6 25 10

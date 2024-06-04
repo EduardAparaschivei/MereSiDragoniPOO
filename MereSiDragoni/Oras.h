@@ -21,6 +21,9 @@ public:
 	void addObiectSpecial(const ObiectSpecial& special);
 	void printObiecte();
 	bool esteNumar(const string& str);
+
+	int getDimInventar();
+	Obiect* getObiect(int index);
 private:
 	int ID;
 	int nrIteme;

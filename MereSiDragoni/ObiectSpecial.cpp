@@ -17,7 +17,7 @@ ObiectSpecial::ObiectSpecial(string _Tip, string _Nume,int _HP, int _Bani, int _
 
 ObiectSpecial::~ObiectSpecial()
 {
-
+	
 }
 
 void ObiectSpecial::Info()
