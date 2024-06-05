@@ -26,11 +26,19 @@ public:
 
 	void CreazaJucator(Jucator& jucator);
 
+	void LevelUP(Jucator& jucator);
+
 	friend void setPuncte(Jucator& jucator, Obiect& obiect);
+	
+	void VictoryScreen(Jucator& jucator);
 
 private:
 	int obtineeveniment();
-
+	void EndScrenn();
+	
+	bool VerificareNumar(const string& numar);
+	int sTOint(const string& str);
+	int numarPtInv();
 };
 
 #endif // GAMEPLAY_H

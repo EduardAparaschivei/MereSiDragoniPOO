@@ -7,6 +7,8 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <Windows.h>
+#include <sstream>
 
 using namespace std;
 
@@ -35,6 +37,10 @@ void GamePlay::MeniuPrincipal(Jucator& jucator, Arma*& arma, string numeFisier, 
 			if (jucator.getNume() != "")
 			{
 				alegere = '0';
+			}
+			if (jucator.getStagiu() > 5)
+			{
+				VictoryScreen(jucator);
 			}
 			break;
 		}
@@ -103,12 +109,17 @@ void GamePlay::Exploreaza(Jucator& jucator, Arma*& arma, string numeFisier, stri
 		{
 			Lupta(jucator, arma, numeFisier, numeFisier2);
 		}
+		else
+		{
+			return;
+		}
 	}
 	else if (sansa == 1)
 	{
 		cout << "Ai gasit un mar in padure!" << endl;
-		ObiectSpecial mar("mar", "Mar", 1, 0, 10, 10);
+		ObiectSpecial mar("mar", "Mar", 1, 5, 10, 10);
 		jucator.addObiectSpecial(mar);
+		TransferStatusuri(jucator, mar);
 	}
 	else if (sansa == 2)
 	{
@@ -118,6 +129,10 @@ void GamePlay::Exploreaza(Jucator& jucator, Arma*& arma, string numeFisier, stri
 		{
 			ViziteazaMagazin(jucator, oras,numeFisierOrase);
 		}
+		else
+		{
+			return;
+		}
 	}
 	else if (sansa == 3)
 	{
@@ -125,7 +140,7 @@ void GamePlay::Exploreaza(Jucator& jucator, Arma*& arma, string numeFisier, stri
 		jucator.setHp(jucator.getHp() - 5);
 		if (jucator.getHp() < 0)
 		{
-			cout << "Ai murit!";
+			EndScrenn();
 			exit(0);
 		}
 	}
@@ -138,6 +153,7 @@ void GamePlay::Exploreaza(Jucator& jucator, Arma*& arma, string numeFisier, stri
 		cout << "Ai gasit o arma!" << endl;
 		Arma arma;
 		jucator.addArma(arma);
+		TransferStatusuri(jucator, arma);
 	}
 	this_thread::sleep_for(chrono::seconds(1));
 }
@@ -155,19 +171,19 @@ void GamePlay::EchipeazaArma(Jucator& jucator,Arma*& arma, string numeFisier)
 		system("cls");
 		jucator.printObiecte();
 		cout << "Alege un Item: ";
-		char input = _getch();
-		int obiectales = input - '0';
-		obiectales =obiectales-1;
-		if (obiectales >= jucator.getDimInventar() || obiectales < 0)
+		
+		int ales = numarPtInv();
+		if (ales >= jucator.getDimInventar() || ales < 0)
 		{
 			cout << "Obiect Inexistent!";
 			break;
 		}
-		Obiect* temporar = jucator.getObiect(obiectales);
+		Obiect* temporar = jucator.getObiect(ales);
 		if (Arma* armaselectata = dynamic_cast<Arma*>(temporar))
 		{
 			cout << "Arma echipata!" << endl;
 			arma = armaselectata;
+			arma->Info();
 			break;
 		}
 		ObiectSpecial* specialselectat = dynamic_cast<ObiectSpecial*>(temporar);
@@ -175,14 +191,14 @@ void GamePlay::EchipeazaArma(Jucator& jucator,Arma*& arma, string numeFisier)
 		{
 			cout << "Ai mancat un mar!";
 			jucator.setHp(jucator.getHp() + 20);
-			jucator.removeObiect(obiectales);
+			jucator.removeObiect(ales);
 			jucator.salvareFisier();
 			PreiaJucator(jucator, numeFisier);
 			break;
 		}
 		
 	}while(true);
-	this_thread::sleep_for(chrono::seconds(1));
+	this_thread::sleep_for(chrono::seconds(2));
 }
 
 //metoda pentru a crea o entiate jucator noua
@@ -195,17 +211,20 @@ void GamePlay::CreazaJucator(Jucator& jucator)
 	int puncte = 5;
 	char alegere;
 	string nume;
-	cout << "Introdu Nume: ";
-	cin >> nume;
+	do {
+		cout << "Introdu Nume: ";
+		cin >> nume;
+	} while (nume.length() < 3 || nume.length() > 15);
 	jucator.setNume(nume);
-	cout << "Ai 5 puncte pentru a le pune in abilitati." << endl;
 	while (puncte != 0)
 	{
+		system("cls");
 		cout << "Nume:" << jucator.getNume() << endl;
 		cout << "Puncte ramase: " << puncte << endl;
-		cout << "1.Putere-" << jucator.getPutere()
-			<< "\n2.Inteligenta" << jucator.getInteligenta()
-			<< "\n3.Agilitate" << jucator.getAgilitate()
+		cout << "Poti pune puncte in urmatoarele abilitati apasand tasta corespunzatoare. " << endl;
+		cout << "1.Putere: " << jucator.getPutere()
+			<< "\n2.Inteligenta: " << jucator.getInteligenta()
+			<< "\n3.Agilitate: " << jucator.getAgilitate()
 			<< "\nDO: ";
 
 		alegere = _getch();
@@ -228,11 +247,12 @@ void GamePlay::CreazaJucator(Jucator& jucator)
 		else {
 			cout << "Alegere incorecta!" << endl;
 		}
-		system("cls");
+		
 
 	}
+	cout << "Jocul va incepe!" << endl;
 	jucator.salvareFisier();
-
+	this_thread::sleep_for(chrono::seconds(2));
 }
 
 //metoda pentru a continua jocul cu o entitate jucator luata din fisier
@@ -280,8 +300,17 @@ void GamePlay::Lupta(Jucator& jucator,Arma*& arma,string numeFisier, string nume
 			{
 				cout << "Ai provocat " << 10 * jucator.getPutere() << " daune dragonului!" << endl;
 			}
-			jucator.setHp(jucator.getHp() - (dragon.getDaune() * dragon.getDificultate()));
-			cout << "Dragonul ti-a provocat " << dragon.getDaune() * dragon.getDificultate() << " daune!" << endl;
+			int randomnr = rand() % 50;
+			if (randomnr  > jucator.getAgilitate())
+			{
+				jucator.setHp(jucator.getHp() - (dragon.getDaune() * dragon.getDificultate()));
+				cout << "Dragonul ti-a provocat " << dragon.getDaune() * dragon.getDificultate() << " daune!" << endl;
+			}
+			else
+			{
+				cout << "Ai evitat atacul dragonului!" << endl;
+			}
+			
 			if (dragon.getHp() <= 0)
 			{
 				cout << "Ai castigat lupta!";
@@ -300,16 +329,22 @@ void GamePlay::Lupta(Jucator& jucator,Arma*& arma,string numeFisier, string nume
 		case '3':
 			cout << "Ai fugit!" << endl;
 			this_thread::sleep_for(chrono::seconds(1));
-			break;
+			return;
 
 		default:
 			break;
 		}
 
-	} while (alegere != 3 && dragon.getHp() > 0&&jucator.getHp()>0);
+	} while (alegere != 3 && dragon.getHp() > 0 && jucator.getHp() > 0 );
 	if (jucator.getHp() < 0)
 	{
 		cout << "Ai murit!";
+		EndScrenn();
+		exit(0);
+	}
+	if (jucator.getStagiu() > 5)
+	{
+		VictoryScreen(jucator);
 		exit(0);
 	}
 
@@ -334,9 +369,7 @@ void GamePlay::ViziteazaMagazin(Jucator& jucator, Oras& oras,string numeFisierOr
 			system("cls");
 			oras.printObiecte();
 			cout << "\nAlege ce item vrei sa cumperi: ";
-			char input = _getch();
-			int obiectales = input - '0';
-			obiectales = obiectales - 1;
+			int obiectales = numarPtInv();
 			if (obiectales >= oras.getDimInventar() || obiectales < 0)
 			{
 				cout << "\nObiect Inexistent!";
@@ -346,7 +379,7 @@ void GamePlay::ViziteazaMagazin(Jucator& jucator, Oras& oras,string numeFisierOr
 			if (jucator.getBani() < (temporar->getBani() - jucator.getInteligenta()))
 			{
 				cout<<"Nu ai suficienti bani!"<<endl;
-				this_thread::sleep_for(chrono::seconds(1));
+				this_thread::sleep_for(chrono::seconds(2));
 				break;
 			}
 			if (Arma* armaselectata = dynamic_cast<Arma*>(temporar))
@@ -383,17 +416,16 @@ void GamePlay::ViziteazaMagazin(Jucator& jucator, Oras& oras,string numeFisierOr
 
 			jucator.printObiecte();
 			cout << "\nCe vrei sa vinzi: ";
-			char index = _getch();
-			int ales = index - '0';
-			ales -= 1;
+			int ales = numarPtInv();
 			if (ales >= 0 && ales < jucator.getDimInventar())
 			{
 				cout << "Ai vandut:";
 				jucator.getObiect(ales)->Info();
+				cout << "\nSi ai obtinut " << jucator.getObiect(ales)->getBani() << " banuti!";
 				jucator.setBani(jucator.getBani() + jucator.getObiect(ales)->getBani());
 				jucator.removeObiect(ales);
 				jucator.salvareFisier();
-				this_thread::sleep_for(chrono::seconds(1));
+				this_thread::sleep_for(chrono::seconds(2));
 				break;
 			}
 			
@@ -405,9 +437,7 @@ void GamePlay::ViziteazaMagazin(Jucator& jucator, Oras& oras,string numeFisierOr
 			system("cls");
 			oras.printObiecte();
 			cout << "Ce obiect vrei sa furi: ";
-			char input = _getch();
-			int obiectales = input - '0';
-			obiectales = obiectales - 1;
+			int obiectales = numarPtInv();
 			if (obiectales >= oras.getDimInventar() || obiectales < 0)
 			{
 				cout << "\nObiect Inexistent!";
@@ -420,6 +450,11 @@ void GamePlay::ViziteazaMagazin(Jucator& jucator, Oras& oras,string numeFisierOr
 				jucator.setHp(jucator.getHp() - 5);
 				jucator.setBani(jucator.getBani() - 10);
 				this_thread::sleep_for(chrono::seconds(2));
+				if (jucator.getHp() <= 0)
+				{
+					EndScrenn();
+					exit(0);
+				}
 			}
 			else
 			{
@@ -487,16 +522,56 @@ void GamePlay::TransferStatusuri(Jucator& jucator, Dragon& dragon)
 	jucator.setBani(jucator.getBani() + dragon.getBani());
 	jucator.setScor(jucator.getScor() + dragon.getScor());
 	jucator.setXP(jucator.getXP() + dragon.getXP());
+	LevelUP(jucator);
 }
 void GamePlay::TransferStatusuri(Jucator& jucator, Obiect& arma)
 {
 	jucator.setScor(jucator.getScor() + arma.getScor());
 	jucator.setXP(jucator.getXP() + arma.getXP());
+	LevelUP(jucator);
 }
 void GamePlay::TransferStatusuri(Jucator& jucator, Obiect* special)
 {
 	jucator.setScor(jucator.getScor() + special->getScor());
 	jucator.setXP(jucator.getXP() + special->getXP());
+	LevelUP(jucator);
+}
+
+void GamePlay::LevelUP(Jucator& jucator) {
+	if (jucator.getXP() < 100)
+	{
+		return;
+	}
+	jucator.setXP(jucator.getXP() - 100);
+	int puncte=1;
+	cout << "Ai avansat un nivel!\nPoti aloca 1 punct in urmatoarele abilitati apasand tasta corespunzatoare. " << endl;
+	cout << "1.Putere: " << jucator.getPutere()
+		<< "\n2.Inteligenta: " << jucator.getInteligenta()
+		<< "\n3.Agilitate: " << jucator.getAgilitate();
+
+	do {
+		cout << "\nDO:";
+		char alegere = _getch();
+		if (alegere == '1')
+		{
+			jucator.upPutere();
+			puncte--;
+		}
+		else if (alegere == '2')
+		{
+			jucator.upInteligenta();
+			puncte--;
+
+		}
+		else if (alegere == '3')
+		{
+			jucator.upAgilitate();
+			puncte--;
+		}
+		else {
+			cout << "Alegere incorecta!" << endl;
+		}
+	} while (puncte == 1);
 }
 
 //obtinearea unui nr aleator pentru metoda Exploreaza
@@ -530,4 +605,88 @@ int GamePlay::obtineeveniment()
 	{
 		return 5;
 	}
+}
+//ASCII art pentru ecranul final
+void GamePlay::EndScrenn()
+{
+	system("cls");
+	cout << "Jocul s-a terminat. Ai fost Ucis!\n";
+	cout << "\n";
+	std::cout << "                            ,--.\n";
+	std::cout << "                           {    }\n";
+	std::cout << "                           K,   }\n";
+	std::cout << "                          /  ~Y`\n";
+	std::cout << "                     ,   /   /\n";
+	std::cout << "                    {_'-K.__/\n";
+	std::cout << "                      `/-.__L._\n";
+	std::cout << "                      /  ' /`\\_}\n";
+	std::cout << "                     /  ' /\n";
+	std::cout << "             ____   /  ' /\n";
+	std::cout << "      ,-'~~~~    ~~/  ' /_\n";
+	std::cout << "    ,'             ``~~~  ',\n";
+	std::cout << "   (                        Y\n";
+	std::cout << "  {                         I\n";
+	std::cout << " {      -                    `,\n";
+	std::cout << " |       ',                   )\n";
+	std::cout << " |        |   ,..__      __. Y\n";
+	std::cout << " |    .,_./  Y ' / ^Y   J   }\n";
+	std::cout << " \\           |' /   |   |   ||\n";
+	std::cout << "  \\          L_/    . _ (_,.'(\n";
+	std::cout << "   \\,   ,      ^^\"\"' / |      )\n";
+	std::cout << "     \\_  \\          /,L]     /\n";
+	std::cout << "       '-_~-,       ` `   ./`\n";
+	std::cout << "          `'{_            )\n";
+	std::cout << "              ^^\\..___,.--`\n";
+}
+
+void GamePlay::VictoryScreen(Jucator& jucator)
+{
+	system("cls");
+	cout << "Ai ucis toti dragonii!\nScorul tau final:" << jucator.getScor()<<"\n";
+
+
+	
+		std::cout << " ___      ___ ___  ________ _________  ________  ________  ___  _______      \n";
+		std::cout << "|\\  \\    /  /|\\  \\|\\   ____\\\\___   ___\\\\   __  \\|\\   __  \\|\\  \\|\\  ___ \\     \n";
+		std::cout << "\\ \\  \\  /  / | \\  \\ \\  \\___\\|___ \\  \\_\\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\ \\   __/|    \n";
+		std::cout << " \\ \\  \\/  / / \\ \\  \\ \\  \\       \\ \\  \\ \\ \\  \\\\\\  \\ \\   _  _\\ \\  \\ \\  \\_|/__  \n";
+		std::cout << "  \\ \\    / /   \\ \\  \\ \\  \\____   \\ \\  \\ \\ \\  \\\\\\  \\ \\  \\\\  \\\\ \\  \\ \\  \\_|\\ \\ \n";
+		std::cout << "   \\ \\__/ /     \\ \\__\\ \\_______\\  \\ \\__\\ \\ \\_______\\ \\__\\\\ _\\\\ \\__\\ \\_______\\\n";
+		std::cout << "    \\|__|/       \\|__|\\|_______|   \\|__|  \\|_______|\\|__|\\|__|\\|__|\\|_______|\n";
+		std::cout << "                                                                            \n";
+		std::cout << "                                                                            \n";
+		std::cout << "                                                                            \n";
+	
+		exit(0);
+}
+
+//Metoda verificare string daca e numar
+bool GamePlay::VerificareNumar(const string& numar)
+{
+	std::istringstream iss(numar);
+	int nr;
+	return (iss >> nr) && (iss.eof());
+
+}
+//Metoda pentru a transforma un string in numar
+int  GamePlay::sTOint(const string& str)
+{
+	std::istringstream iss(str);
+	int numar;
+	iss >> numar;
+	return numar;
+}
+//Metoda pentru obtinere numar formatat pentru lucrul cu inventarul
+int  GamePlay::numarPtInv()
+{
+	string input;
+	int ales = -1;
+	cin >> input;
+	if (VerificareNumar(input))
+	{
+		ales = sTOint(input);
+		ales = ales - 1;
+		return ales;
+	}
+	return ales;
 }

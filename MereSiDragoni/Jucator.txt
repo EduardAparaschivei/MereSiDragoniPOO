@@ -1,4 +1,14 @@
-Edo 55 60 60 313 3 1 1 3
-arma Cutit 36 22 36 20 50
-arma Maceta 14 39 22 31 43
-arma Topor 20 42 6 25 10
+edi 170 300 2 818 10 1 2 6
+arma Cutit 35 24 44 28 27
+arma Sulita 22 11 48 34 35
+arma Cutit 11 38 33 25 29
+mar Mar 1 5 10 10
+arma Topor 34 23 26 33 18
+mar Mar 1 5 10 10
+arma Sulita 46 8 3 13 30
+arma Arc 41 10 27 25 3
+mar Mar 1 5 10 10
+arma Maceta 19 35 8 11 11
+mar Mar 1 5 10 10
+mar Mar 1 5 10 10
+arma Maceta 38 34 37 36 25
